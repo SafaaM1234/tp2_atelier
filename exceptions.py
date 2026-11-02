@@ -1,9 +1,6 @@
 """Les erreurs métier de l'application de supervision."""
 
 
-from email import message
-
-
 class AtelierError(Exception):
     """Classe mère de toutes les erreurs de l'application."""
 
