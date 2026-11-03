@@ -136,22 +136,49 @@ def ecrire_rejets(erreurs: list[ReleveInvalide], chemin: Path) -> None:
 # --- Étape 5 : analyser (dictionnaires, compréhensions) ------------------------------------------
 def par_machine(releves: list[Releve]) -> dict[str, list[Releve]]:
     """Regroupe les relevés par machine : {machine: [relevés dans l'ordre du fichier]}."""
-    raise NotImplementedError("à compléter")
+    groupes = {}
+
+    for releve in releves:
+        machine = releve[0]
+        groupes.setdefault(machine, []).append(releve)
+
+    return groupes
 
 
 def moyennes(releves: list[Releve]) -> dict[str, tuple[float, float]]:
     """{machine: (température moyenne arrondie à 0,1 ; vibration moyenne arrondie à 0,01)}."""
-    raise NotImplementedError("à compléter")
+    return {
+        machine: (
+            round(sum(r[2] for r in liste) / len(liste), 1),
+            round(sum(r[3] for r in liste) / len(liste), 2)
+        )
+        for machine, liste in par_machine(releves).items()
+    }
 
 
 def alertes(releves: list[Releve], machines: dict[str, dict]) -> list[tuple[str, datetime, str]]:
     """Liste des dépassements de seuil (machine, horodatage, motif), triée par horodatage puis machine."""
-    raise NotImplementedError("à compléter")
+    alertes_temp = [
+        (machine, h, f"température {temperature} > {machines[machine]['temp_max']}")
+        for machine, h, temperature, vibration in releves
+        if temperature > machines[machine]["temp_max"]
+    ]
+
+    alertes_vib = [
+        (machine, h, f"vibration {vibration} > {machines[machine]['vib_max']}")
+        for machine, h, temperature, vibration in releves
+        if vibration > machines[machine]["vib_max"]
+    ]
+
+    resultat = alertes_temp + alertes_vib
+    resultat.sort(key=lambda alerte: (alerte[1], alerte[0]))
+
+    return resultat
 
 
 def machines_silencieuses(releves: list[Releve], machines: dict[str, dict]) -> set[str]:
     """Les machines du référentiel qui n'ont envoyé aucun relevé valide (capteur en panne ?)."""
-    raise NotImplementedError("à compléter")
+    return set(machines) - {machine for machine, h, temperature, vibration in releves}
 
 
 # --- Étape 6 : trier ---------------------------------------------------------------------------
