@@ -1,12 +1,12 @@
 # TP2 – Supervision des machines d’un atelier
-
-## Présentation
+## **Réalisé par : Safaa Mounkid**
+### Présentation
 
 Ce projet a été réalisé dans le cadre du TP2 de Python à l'ENSAM, année universitaire 2026–2027.
 
 L'objectif est de développer une application Python permettant de superviser les machines d'un atelier industriel à partir de fichiers JSON, CSV et LOG.
 
-## Fonctionnalités
+### Fonctionnalités
 
 - Chargement des machines depuis un fichier JSON.
 - Lecture et validation des relevés depuis un fichier CSV.
@@ -19,7 +19,7 @@ L'objectif est de développer une application Python permettant de superviser le
 - Calcul du temps d'arrêt des machines.
 - Génération d'un rapport JSON et d'un fichier CSV des rejets.
 
-## Technologies utilisées
+### Technologies utilisées
 
 - Python 3
 - JSON et CSV
@@ -29,7 +29,7 @@ L'objectif est de développer une application Python permettant de superviser le
 - Pytest
 - Git et GitHub
 
-## Exécution
+### Exécution
 
 Lancer le programme :
 
@@ -37,7 +37,7 @@ Lancer le programme :
 python main.py
 ```
 
-## Tests
+### Tests
 
 Exécuter tous les tests :
 
@@ -45,7 +45,6 @@ Exécuter tous les tests :
 pytest -q
 ```
 
-**Résultat obtenu : 54 tests réussis.**
 
 ## Structure du projet
 
