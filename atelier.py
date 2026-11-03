@@ -120,6 +120,7 @@ def lire_releves(chemin: Path, machines: dict[str, dict]) -> tuple[list[Releve],
 
 def ecrire_rejets(erreurs: list[ReleveInvalide], chemin: Path) -> None:
     """Écrit les lignes rejetées dans un CSV ligne;champ;message, lisible par Excel."""
+    
     with open(chemin, "w", encoding="utf-8-sig", newline="") as fichier:
         writer = csv.writer(fichier, delimiter=";")
 
@@ -211,12 +212,52 @@ def top_vibrations(releves: list[Releve], n: int = 3) -> list[Releve]:
 # --- Étape 7 : le rapport JSON ------------------------------------------------------------------
 def construire_rapport(releves: list[Releve], erreurs: list[ReleveInvalide], machines: dict[str, dict]) -> dict:
     """Le rapport sous forme d'un dictionnaire prêt pour json.dump (pas de datetime, pas d'ensemble)."""
-    raise NotImplementedError("à compléter")
+
+    moyennes_triees = {
+        machine: {
+            "temperature": temperature,
+            "vibration": vibration
+        }
+        for machine, (temperature, vibration) in sorted(moyennes(releves).items())
+    }
+
+    liste_alertes = [
+        {
+            "machine": machine,
+            "heure": h.strftime("%H:%M"),
+            "motif": motif
+        }
+        for machine, h, motif in alertes(releves, machines)
+    ]
+
+    machines_a_surveiller = [
+        machine
+        for machine, nombre in classement(releves, machines)
+        if nombre > 0
+    ]
+
+    rapport = {
+        "releves_valides": len(releves),
+        "lignes_rejetees": len(erreurs),
+        "moyennes": moyennes_triees,
+        "alertes": liste_alertes,
+        "classement": machines_a_surveiller,
+        "machines_silencieuses": sorted(machines_silencieuses(releves, machines))
+    }
+
+    return rapport
 
 
 def ecrire_rapport(rapport: dict, chemin: Path) -> None:
     """Écrit le rapport en JSON indenté, accents conservés."""
-    raise NotImplementedError("à compléter")
+    
+    with open(chemin, "w", encoding="utf-8") as fichier:
+        json.dump(
+            rapport,
+            fichier,
+            ensure_ascii=False,
+            indent=2
+        )
 
 
 # --- Étape 8 (à la maison) : le journal des événements (expressions régulières) ------------------
